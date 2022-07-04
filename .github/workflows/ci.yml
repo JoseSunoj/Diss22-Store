@@ -36,20 +36,17 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar      
       - name: Install node.js packages
         run: npm ci
-      - name: Install Snyk CLI
-        run: |
-          curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
-          chmod +x snyk
-      - name: Snyk test
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven-3-jdk-11@master
         continue-on-error: true
-        run: ./snyk test --all-projects
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      - name: Snyk monitor
-        continue-on-error: true
-        run: ./snyk monitor --all-projects
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
       - name: Run backend test
         run: |
           chmod +x mvnw
