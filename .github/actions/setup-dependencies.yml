@@ -16,6 +16,8 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'npm'
+    - name: Install node.js packages
+      run: npm ci   
     - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
@@ -27,5 +29,4 @@ runs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-   
-    - name: Install node.js packages
-      run: npm ci      
+         

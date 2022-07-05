@@ -29,26 +29,26 @@ jobs:
           sarif_file: snyk.sarif  
 
   backend-test:   
-    name: Run backend test
+    name: Backend test
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-dependencies
-
-      - run: |
+      - name: Run backend test
+        run: |
           chmod +x mvnw
           npm run ci:backend:test
 
   frontend-test:        
-    name: Run frontend test
+    name: Frontend test
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-dependencies
-
-      - run: npm run ci:frontend:test
+      - name: Run frontend test
+        run: npm run ci:frontend:test
 
   sonar-scan:
     name: SonarCloud Scan
