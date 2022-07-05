@@ -8,7 +8,7 @@ inputs:
   java-version:
     description: 'The required java version'
     required: true
-    default: 11
+    default: '11'
 runs:
   using: "composite"
   steps:
@@ -17,6 +17,7 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: 'npm'
     - name: Install node.js packages
+      shell: bash
       run: npm ci   
     - uses: actions/setup-java@v3
       with:
