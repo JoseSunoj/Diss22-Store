@@ -13,19 +13,19 @@ runs:
   using: "composite"
   steps:
     - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ inputs.node-version }}
-          cache: 'npm'
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ inputs.java-version }}
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-   
-      - name: Install node.js packages
-        run: npm ci      
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: ${{ inputs.java-version }}
+    - name: Cache local Maven repository
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-   
+    - name: Install node.js packages
+      run: npm ci      
