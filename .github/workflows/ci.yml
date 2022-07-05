@@ -73,7 +73,8 @@ jobs:
         run: |
           chmod +x mvnw
           if [ ! -z "$SONAR_TOKEN" ]; then
-             ./mvnw -ntp initialize sonar:sonar -Dsonar.organization=josesunoj -Dsonar.host.url=https://sonarcloud.io
+              ./mvnw -Pprod clean verify sonar:sonar Dsonar.organization=josesunoj -Dsonar.host.url=https://sonarcloud.io
+             #./mvnw -ntp initialize sonar:sonar -Dsonar.organization=josesunoj -Dsonar.host.url=https://sonarcloud.io
               # mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=JoseSunoj_Diss22-Store
           else
               echo No SONAR_TOKEN, skipping...
