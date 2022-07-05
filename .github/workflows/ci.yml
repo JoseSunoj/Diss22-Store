@@ -52,6 +52,8 @@ jobs:
 
   sonar-scan:
     name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-dependencies
@@ -64,6 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: scan    
         run: |
           if [ ! -z "$SONAR_TOKEN" ]; then
               mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=JoseSunoj_Diss22-Store
