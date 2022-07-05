@@ -1,43 +1,23 @@
 name: Application CI
 on: [push, pull_request]
+
+env:
+  NODE_VERSION: 16.14.0
+  SPRING_OUTPUT_ANSI_ENABLED: DETECT
+  SPRING_JPA_SHOW_SQL: false
+  JHI_DISABLE_WEBPACK_LOGS: true
+
 jobs:
-  pipeline:
-    name: store pipeline
+  snyk-test:
+    name: Run Snyk to check for vulnerabilities
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.pull_request.title, '[skip ci]') && !contains(github.event.pull_request.title, '[ci skip]')"
     timeout-minutes: 40
-    env:
-      NODE_VERSION: 16.14.0
-      SPRING_OUTPUT_ANSI_ENABLED: DETECT
-      SPRING_JPA_SHOW_SQL: false
-      JHI_DISABLE_WEBPACK_LOGS: true
+    
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.0
-          cache: 'npm'
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 11
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-  
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar      
-      - name: Install node.js packages
-        run: npm ci
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven-3-jdk-11@master
+      - uses: ./.github/actions/setup-dependencies
+      
+      - uses: snyk/actions/maven-3-jdk-11@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -46,17 +26,47 @@ jobs:
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk.sarif
+          sarif_file: snyk.sarif  
+
+  backend-test:   
+    name: Backend test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-dependencies
       - name: Run backend test
         run: |
           chmod +x mvnw
           npm run ci:backend:test
+
+  frontend-test:        
+    name: Frontend test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-dependencies
       - name: Run frontend test
         run: npm run ci:frontend:test
-      - name: SonarCloud Scan
+
+  sonar-scan:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-dependencies
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar  
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: scan    
         run: |
           if [ ! -z "$SONAR_TOKEN" ]; then
               mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=JoseSunoj_Diss22-Store
