@@ -73,7 +73,7 @@ jobs:
         run: |
           chmod +x mvnw
           if [ ! -z "$SONAR_TOKEN" ]; then
-              ./mvnw initialize sonar:sonar
+              ./mvnw -Pprod clean verify sonar:sonar
           else
               echo No SONAR_TOKEN, skipping...
           fi  
