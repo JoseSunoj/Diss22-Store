@@ -115,7 +115,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           DOCKER_TAG=${{ steps.myid.outputs.sha8 }}
-          ./mvnw -ntp jib:build -Djib.to.image=l00162972/diss22-store:${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
+          ./mvnw -ntp jib:build -Djib.to.image="${{ secrets.DOCKER_USERNAME }}"/diss22-store:${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
         
         # ## in the event of a release
         #if:(github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
