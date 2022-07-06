@@ -595,6 +595,11 @@
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from instrumentation -->
+                                <excludes>**/Application.*</excludes>
+                                <destFile>${jacoco.utReportFile}</destFile>
+                            </configuration>
                         </execution>
                         <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run -->
                         <execution>
@@ -603,12 +608,23 @@
                             <goals>
                                 <goal>report</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from reporting-->
+                                <excludes>**/Application.*</excludes>
+                                <dataFile>${jacoco.utReportFile}</dataFile>
+                                <outputDirectory>${jacoco.reportFolder}</outputDirectory>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>pre-integration-tests</id>
                             <goals>
                                 <goal>prepare-agent-integration</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from instrumentation -->
+                                <excludes>**/Application.*</excludes>
+                                <destFile>${jacoco.itReportFile}</destFile>
+                            </configuration>
                         </execution>
                         <!-- Ensures that the code coverage report for integration tests is created after integration tests have been run -->
                         <execution>
@@ -617,6 +633,12 @@
                             <goals>
                                 <goal>report-integration</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from reporting-->
+                                <excludes>**/Application.*</excludes>
+                                <dataFile>${jacoco.itReportFile}</dataFile>
+                                <outputDirectory>${jacoco.reportFolder}</outputDirectory>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
