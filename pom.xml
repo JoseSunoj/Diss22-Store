@@ -85,7 +85,7 @@
         <modernizer-maven-plugin.version>2.4.0</modernizer-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
-        <jib-maven-plugin.image>eclipse-temurin:11-jre-focal</jib-maven-plugin.image>
+        <jib-maven-plugin.image>eclipse-temurin@sha256:b102a6085d2b0c7530b3a21fc777189fa29daaf255435b4f133de5c317a17ff6</jib-maven-plugin.image>
         <jib-maven-plugin.architecture>amd64</jib-maven-plugin.architecture>
         <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
         <properties-maven-plugin.version>1.1.0</properties-maven-plugin.version>
@@ -595,6 +595,11 @@
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from instrumentation -->
+                                <excludes>**/Application.*</excludes>
+                                <destFile>${jacoco.utReportFile}</destFile>
+                            </configuration>
                         </execution>
                         <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run -->
                         <execution>
@@ -603,12 +608,23 @@
                             <goals>
                                 <goal>report</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from reporting-->
+                                <excludes>**/Application.*</excludes>
+                                <dataFile>${jacoco.utReportFile}</dataFile>
+                                <outputDirectory>${jacoco.reportFolder}</outputDirectory>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>pre-integration-tests</id>
                             <goals>
                                 <goal>prepare-agent-integration</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from instrumentation -->
+                                <excludes>**/Application.*</excludes>
+                                <destFile>${jacoco.itReportFile}</destFile>
+                            </configuration>
                         </execution>
                         <!-- Ensures that the code coverage report for integration tests is created after integration tests have been run -->
                         <execution>
@@ -617,6 +633,12 @@
                             <goals>
                                 <goal>report-integration</goal>
                             </goals>
+                            <configuration>
+                                <!-- Exclude any class named Application from reporting-->
+                                <excludes>**/Application.*</excludes>
+                                <dataFile>${jacoco.itReportFile}</dataFile>
+                                <outputDirectory>${jacoco.reportFolder}</outputDirectory>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
