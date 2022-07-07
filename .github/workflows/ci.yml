@@ -1,6 +1,9 @@
 name: Application CI
-on: [push, pull_request]
-
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ] 
 env:
   NODE_VERSION: 16.14.0
   SPRING_OUTPUT_ANSI_ENABLED: DETECT
@@ -137,7 +140,7 @@ jobs:
           git clone -b develop "https://${{github.actor}}:${ACCESS_TOKEN}@github.com/JoseSunoj/Diss22-IaC.git" ${TEMP_FOLDER}  
           cd ${TEMP_FOLDER}/manifests/application
           kustomize edit set image l00162972/store=$DOCKER_USERNAME/diss22-store:${DOCKER_TAG}
-          cat kustomization.yaml
+          cat kustomization.yml
           cd ../../
           git config --local user.email '${{github.actor}}@users.noreply.github.com'
           git config --local user.name '${{github.actor}}'
