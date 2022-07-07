@@ -82,7 +82,8 @@ jobs:
           else
               echo No SONAR_TOKEN, skipping...
           fi  
-  snykcntainer-scan:
+
+  snykcontainer-scan:
     name: Scan container image for vulnerabilities
     runs-on: ubuntu-latest
     timeout-minutes: 40 
@@ -99,11 +100,12 @@ jobs:
         with:
           image: store
           args: --severity-threshold=high  
+
   Package-Build-Publish-Update:
     name: Package, build and publish container image using jib, and Update the GitOps repository
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
-    needs: [snyk-test, backend-test, frontend-test, sonar-scan, snykcntainer-scan]
+    needs: [snyk-test, backend-test, frontend-test, sonar-scan, snykcontainer-scan]
     timeout-minutes: 40 
     steps:
       - uses: actions/checkout@v3
@@ -127,7 +129,7 @@ jobs:
         #run: |
         #  GIT_TAG=:${GITHUB_REF#refs/tags/}
         #  DOCKER_TAG=${GIT_TAG#:refs/heads/main}
-        #  ./mvnw -ntp jib:build -Djib.to.image=l00162972/diss22-store${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
+        #  ./mvnw -ntp jib:build -Djib.to.image="${{ secrets.DOCKER_USERNAME }}"/diss22-store${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
       - name: Setup Kustomize
         uses: imranismail/setup-kustomize@v1
       - name: Update Kubernetes resources
@@ -144,5 +146,5 @@ jobs:
           cd ../../
           git config --local user.email '${{github.actor}}@users.noreply.github.com'
           git config --local user.name '${{github.actor}}'
-          git commit -am "update with- $DOCKER_TAG"
+          git commit -am "update store app image with new tag- $DOCKER_TAG"
           git push -u origin develop
