@@ -15,23 +15,31 @@ jobs:
   snyk-test:
     name: Run Snyk to check for vulnerabilities
     permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      contents: read 
+      security-events: write
     runs-on: ubuntu-latest
     timeout-minutes: 40
     
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-dependencies
-      
-      - uses: snyk/actions/maven-3-jdk-11@dc22abdbe8ec00e2a925256fef96f319ca5510ce
+      - name: Install Snyk CLI
+        run: |
+          npm install snyk -g
+          snyk auth ${{secrets.SNYK_TOKEN}}
+      - name: Snyk test
         continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --all-projects --severity-threshold=critical --json > snyk.json
+        
+      - name: Snyk monitor
+        continue-on-error: true
+        run: snyk monitor --all-projects --severity-threshold=critical --json > snyk.json
+         
+      - uses: garethr/snyk-to-sarif@ae8e0fc00597b6befd95a03df5729990da1d7a33
+      - uses: actions/upload-artifact@v2
         with:
-          args: 
-            --all-projects
-            --sarif-file-output=snyk.sarif 
+          name: SARIF
+          path: snyk.sarif      
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -63,6 +71,8 @@ jobs:
 
   sonar-scan:
     name: SonarCloud Scan
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:

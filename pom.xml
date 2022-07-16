@@ -54,8 +54,8 @@
         <hibernate.version>5.6.7.Final</hibernate.version>
         <!-- The liquibase version should match the one managed by
         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
-        <liquibase.version>4.6.1</liquibase.version>
-        <h2.version>1.4.200</h2.version>
+        <liquibase.version>4.13.0</liquibase.version>
+        <h2.version>2.1.214</h2.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <blockhound-junit-platform.version>1.0.6.RELEASE</blockhound-junit-platform.version>
