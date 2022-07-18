@@ -137,18 +137,14 @@ jobs:
         run: npm run java:jar:prod
 
         # jib is not using local docker daemon for this build
-      - name: Build and publish container image to dockerhub
-        if: github.ref == 'refs/heads/main'
-        run: |
-          DOCKER_TAG=${{ steps.myid.outputs.sha8 }}
-          ./mvnw -ntp jib:build -Djib.to.image="${{ secrets.DOCKER_USERNAME }}"/diss22-store:${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
         
-        # ## in the event of a release
-        #if:(github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
-        #run: |
-        #  GIT_TAG=:${GITHUB_REF#refs/tags/}
-        #  DOCKER_TAG=${GIT_TAG#:refs/heads/main}
-        #  ./mvnw -ntp jib:build -Djib.to.image="${{ secrets.DOCKER_USERNAME }}"/diss22-store${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
+      - name: Build and publish container image to dockerhub
+        env:
+          DOCKER_TAG: ${{ steps.myid.outputs.sha8 }}
+          # GIT_TAG: ${GITHUB_REF#refs/tags/}
+          # DOCKER_TAG: ${GIT_TAG#:refs/heads/main}
+        run: |
+          ./mvnw -ntp jib:build -Djib.to.image="${{ secrets.DOCKER_USERNAME }}"/diss22-store:${DOCKER_TAG} -Djib.to.auth.username="${{ secrets.DOCKER_USERNAME }}" -Djib.to.auth.password="${{ secrets.DOCKER_PASSWORD }}" -Pprod
     outputs:
       docker-tag: ${{ steps.myid.outputs.sha8 }} 
 
@@ -167,9 +163,8 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }} 
           ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }} 
-
+          DOCKER_TAG: ${{ needs.Package-Build-Publish.outputs.docker-tag }}
         run: |
-          DOCKER_TAG=${{ needs.Package-Build-Publish.outputs.docker-tag }}
           TEMP_FOLDER="$(mktemp -d)" 
           git clone -b develop "https://${{github.actor}}:${ACCESS_TOKEN}@github.com/JoseSunoj/Diss22-IaC.git" ${TEMP_FOLDER}  
           cd ${TEMP_FOLDER}/manifests/application/base/store-k8s
