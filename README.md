@@ -1,7 +1,7 @@
 # Diss22-Store
 Gateway For Cloud-native Microservices e-commerce application.
 
-The microservices are independendly developed and versioned in their respective Git repositories and can be accessed from below links.
+The microservices are independently developed and versioned in their respective Git repositories and can be accessed from below links.
 
 * [product](https://github.com/JoseSunoj/Diss22-Product)
 * [invoice](https://github.com/JoseSunoj/Diss22-Invoice)
