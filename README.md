@@ -1,13 +1,13 @@
 # Diss22-Store
 Gateway For Cloud-native Microservices e-commerce application.
 
-The microservices are independently developed and versioned in their respective Git repositories and can be accessed from below links.
+The microservices are independently developed and versioned in their respective Git repositories and can be accessed from the links below.
 
 * [product](https://github.com/JoseSunoj/Diss22-Product)
 * [invoice](https://github.com/JoseSunoj/Diss22-Invoice)
 * [notification](https://github.com/JoseSunoj/Diss22-Notification)
 
-The application is deployed to a GKE cluster using a pull-based GitOps approach with the help of Terraform Cloud and Argo CD. The GitOps repo with Terraform and YAML configuration can be accesed from the following link.
+The application is deployed to a GKE cluster using a pull-based GitOps approach with the help of Terraform Cloud and Argo CD. The GitOps repo with Terraform and YAML configuration can be accessed from the following link.
 
 * [GitOps Repo](https://github.com/JoseSunoj/Diss22-IaC)
 
