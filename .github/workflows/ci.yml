@@ -3,7 +3,9 @@ on:
   push:
     branches: [ main, develop ]
   pull_request:
-    branches: [ main ] 
+    branches: [ main ]
+permissions:
+  contents: read     
 env:
   NODE_VERSION: 16.14.0
   SPRING_OUTPUT_ANSI_ENABLED: DETECT
